@@ -53,8 +53,11 @@
                            <input class="form-control" type="text"
                            	<%-- 防止有人在裡面觸發 js的程式語句 預防惡意破壞  --%>
                                   value="${fn:escapeXml(todo.text)}"
+                                  <%-- 當觸發ondblclick 變成可更動的 --%>
                                   ondblclick="this.readOnly = !this.readOnly"
+                                	  <%--事件 修改id input物件 --%>
                                   onkeydown="updateText(event, ${todo.id}, this)"
+                                  <%--readonly 不可更動的 --%>
                                   readonly title="按我兩下可以編輯，Enter 儲存" />
                        </div>
                        <small class="text-muted">（雙擊可編輯，按 Enter 儲存）</small>
@@ -75,6 +78,7 @@
        const updateText = (event, id, input) => {
            if (event.key === 'Enter') {
                input.readOnly = true;
+               <!-- encodeURIComponent 為URL做可讀英文編碼  因為有時候是"中文"  當你用get請求?攜帶數據 但是有中文的情景 就要用-->
                const url = '/JavaWebTodoList/todolist/update?id=' + id + '&text=' + encodeURIComponent(input.value);
                location.href = url;
            }

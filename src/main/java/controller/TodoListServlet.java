@@ -23,7 +23,7 @@ public class TodoListServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		String pathInfo = req.getPathInfo();		
-		resp.getWriter().print("pathInfo = " + pathInfo);
+		//resp.getWriter().print("pathInfo = " + pathInfo);
 		String id = req.getParameter("id");
 		String text = req.getParameter("text");
 		String completed = req.getParameter("checked");
