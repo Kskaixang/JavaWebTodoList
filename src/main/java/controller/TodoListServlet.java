@@ -22,8 +22,11 @@ public class TodoListServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		String pathInfo = req.getPathInfo();
+		String pathInfo = req.getPathInfo();		
 		resp.getWriter().print("pathInfo = " + pathInfo);
+		String id = req.getParameter("id");
+		String text = req.getParameter("text");
+		String completed = req.getParameter("checked");
 		switch (pathInfo) {
 		// add我們在toPost做
 		case "/": //顯示首頁
@@ -33,24 +36,32 @@ public class TodoListServlet extends HttpServlet{
 			req.setAttribute("todos", todos);
 			rd.forward(req, resp);
 			return;	
-		case "/update": //顯示首頁
-			String id = req.getParameter("id");
-			String text = req.getParameter("text");
-			String completed = req.getParameter("checked");
 			
-			//不會有同時改兩分的狀態 所以分開判斷
+		case "/update": //修改			
+			//不會有同時改兩分的狀態 所以分開判斷 但使用者滑鼠 一次只會操做一個項目 所以雙return還在邏輯內
 			if(completed != null) {
 				//修改Todo.completed 完成狀態
-				
-			}else if(text != null) {
-				//修改Todo.text 內容
-				
+				service.updateTodoComplete(Integer.parseInt(id), Boolean.parseBoolean(completed));
+				resp.sendRedirect("/JavaWebTodoList/todolist/");
+				return;
 			}
-			break;
-		case "/delete": //顯示首頁
+			if(text != null) {
+				//修改Todo.text 內容
+				service.updateTodoText(Integer.parseInt(id), text);
+				resp.sendRedirect("/JavaWebTodoList/todolist/");
+				return;
+			}			
+			break;					
 			
-			break;			
-		default: 
+			
+		case "/delete": 
+			
+			service.deleteTodo(Integer.parseInt(id));
+			//重跑首頁 (我們自己指定的)
+			resp.sendRedirect("/JavaWebTodoList/todolist/");
+			return;	
+			
+		default: 			
 			//錯誤路徑
 			resp.getWriter().print("path error");
 			return;
@@ -67,6 +78,14 @@ public class TodoListServlet extends HttpServlet{
 			resp.getWriter().print("path error");
 			return;
 		} 
+		//進行新增程序
+		String text = req.getParameter("text");		
+		//因為任務剛添加時還沒做完 先預設false
+		Boolean completed = false;
+		service.addTodo(text, completed);
+		//重跑首頁 (我們自己指定的)
+		resp.sendRedirect("/JavaWebTodoList/todolist/");
+		
 		
 		//RequestDispatcher rd = req.getRequestDispatcher("/todolist" + pathInfo);
 		
